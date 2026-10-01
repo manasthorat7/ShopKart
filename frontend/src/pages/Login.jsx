@@ -30,7 +30,7 @@ function Login() {
     setLoading(true);
     try {
       await api.post("/customers/login", formData);
-      navigate("/home");
+      navigate("/products");
     } catch (err) {
       setError(err.response?.data?.message || "Invalid Credentials");
     } finally {

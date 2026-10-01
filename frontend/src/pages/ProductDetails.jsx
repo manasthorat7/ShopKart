@@ -8,6 +8,23 @@ function ProductDetails() {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [wishlistStatus, setWishlistStatus] = useState("");
+
+  const handleAddToWishlist = async () => {
+    setWishlistStatus("loading");
+    try {
+      await api.post(`/wishlist/${product._id}`);
+      setWishlistStatus("added");
+    } catch (err) {
+      if (err.response && err.response.status === 409) {
+        setWishlistStatus("already");
+      } else if (err.response && err.response.status === 401) {
+        setWishlistStatus("Please login first");
+      } else {
+        setWishlistStatus("Failed to add");
+      }
+    }
+  };
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -72,9 +89,27 @@ function ProductDetails() {
               <span>{product.stock} units left</span>
             </div>
           </div>
-          <button className="btn-primary" style={{ marginTop: "20px" }}>
-            Add to Cart
-          </button>
+          <div style={{ display: "flex", gap: "12px", marginTop: "20px" }}>
+            <button className="btn-primary" style={{ margin: 0 }}>
+              Add to Cart
+            </button>
+            <button
+              className="btn-wishlist"
+              style={{ margin: 0, padding: "10px", fontSize: "15px", fontWeight: "bold" }}
+              disabled={wishlistStatus === "loading" || wishlistStatus === "added"}
+              onClick={handleAddToWishlist}
+            >
+              {wishlistStatus === "loading"
+                ? "⏳ Saving..."
+                : wishlistStatus === "added"
+                ? "♥ Added to Wishlist"
+                : wishlistStatus === "already"
+                ? "Already in Wishlist"
+                : wishlistStatus
+                ? wishlistStatus
+                : "♡ Add to Wishlist"}
+            </button>
+          </div>
         </div>
       </div>
     </div>

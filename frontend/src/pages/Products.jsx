@@ -10,6 +10,23 @@ function Products() {
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All Categories");
+  const [wishlistStatus, setWishlistStatus] = useState({});
+
+  const handleAddToWishlist = async (productId) => {
+    setWishlistStatus((prev) => ({ ...prev, [productId]: "loading" }));
+    try {
+      await api.post(`/wishlist/${productId}`);
+      setWishlistStatus((prev) => ({ ...prev, [productId]: "added" }));
+    } catch (err) {
+      if (err.response && err.response.status === 409) {
+        setWishlistStatus((prev) => ({ ...prev, [productId]: "already" }));
+      } else if (err.response && err.response.status === 401) {
+        setWishlistStatus((prev) => ({ ...prev, [productId]: "Please login first" }));
+      } else {
+        setWishlistStatus((prev) => ({ ...prev, [productId]: "Failed to add" }));
+      }
+    }
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -96,6 +113,21 @@ function Products() {
                   <p className="product-stock">{product.stock} units left</p>
                   <button className="btn-details" onClick={() => navigate(`/products/${product._id}`)}>
                     View Details
+                  </button>
+                  <button
+                    className="btn-wishlist"
+                    disabled={wishlistStatus[product._id] === "loading" || wishlistStatus[product._id] === "added"}
+                    onClick={() => handleAddToWishlist(product._id)}
+                  >
+                    {wishlistStatus[product._id] === "loading"
+                      ? "⏳ Saving..."
+                      : wishlistStatus[product._id] === "added"
+                      ? "♥ Added to Wishlist"
+                      : wishlistStatus[product._id] === "already"
+                      ? "Already in Wishlist"
+                      : wishlistStatus[product._id]
+                      ? wishlistStatus[product._id]
+                      : "♡ Add to Wishlist"}
                   </button>
                 </div>
               </div>
