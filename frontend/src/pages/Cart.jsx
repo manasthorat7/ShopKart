@@ -151,7 +151,7 @@ function Cart() {
               <strong>Subtotal:</strong>
               <strong className="summary-price">₹{subtotal}</strong>
             </div>
-            <button className="btn-primary btn-checkout">
+            <button className="btn-primary btn-checkout" onClick={() => navigate("/checkout")}>
               Proceed to Checkout
             </button>
           </div>

@@ -29,6 +29,9 @@ function Navbar() {
         <span style={{ color: "#fff", cursor: "pointer" }} onClick={() => navigate("/wishlist")}>
           Wishlist
         </span>
+        <span style={{ color: "#fff", cursor: "pointer" }} onClick={() => navigate("/orders")}>
+          My Orders
+        </span>
         <span
           style={{ color: "#fff", cursor: "pointer", fontSize: "20px" }}
           title="Profile"
