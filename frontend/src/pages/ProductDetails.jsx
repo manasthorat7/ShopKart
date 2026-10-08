@@ -2,13 +2,28 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import api from "../services/api";
+import { useCart } from "../context/CartContext";
 
 function ProductDetails() {
   const { id } = useParams();
+  const { addToCart } = useCart();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [wishlistStatus, setWishlistStatus] = useState("");
+  const [cartStatus, setCartStatus] = useState("");
+
+  const handleAddToCart = async () => {
+    setCartStatus("loading");
+    const result = await addToCart(product._id);
+    if (result.success) {
+      setCartStatus("added");
+      setTimeout(() => setCartStatus(""), 1500);
+    } else {
+      setCartStatus(result.error || "Failed to add");
+      setTimeout(() => setCartStatus(""), 2500);
+    }
+  };
 
   const handleAddToWishlist = async () => {
     setWishlistStatus("loading");
@@ -90,8 +105,19 @@ function ProductDetails() {
             </div>
           </div>
           <div style={{ display: "flex", gap: "12px", marginTop: "20px" }}>
-            <button className="btn-primary" style={{ margin: 0 }}>
-              Add to Cart
+            <button
+              className="btn-primary"
+              style={{ margin: 0 }}
+              disabled={cartStatus === "loading"}
+              onClick={handleAddToCart}
+            >
+              {cartStatus === "loading"
+                ? "Adding..."
+                : cartStatus === "added"
+                ? "✓ Added to Cart"
+                : cartStatus
+                ? cartStatus
+                : "Add to Cart"}
             </button>
             <button
               className="btn-wishlist"

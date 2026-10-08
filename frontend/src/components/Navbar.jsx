@@ -1,9 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
+import { useCart } from "../context/CartContext";
 
 function Navbar() {
   const navigate = useNavigate();
+  const { cartCount } = useCart();
 
   const handleLogout = async () => {
     try {
@@ -21,6 +23,9 @@ function Navbar() {
         ShopKart
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+        <span style={{ color: "#fff", cursor: "pointer" }} onClick={() => navigate("/cart")}>
+          Cart ({cartCount})
+        </span>
         <span style={{ color: "#fff", cursor: "pointer" }} onClick={() => navigate("/wishlist")}>
           Wishlist
         </span>

@@ -2,15 +2,34 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import api from "../services/api";
+import { useCart } from "../context/CartContext";
 
 function Products() {
   const navigate = useNavigate();
+  const { addToCart } = useCart();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All Categories");
   const [wishlistStatus, setWishlistStatus] = useState({});
+  const [cartStatus, setCartStatus] = useState({});
+
+  const handleAddToCart = async (productId) => {
+    setCartStatus((prev) => ({ ...prev, [productId]: "loading" }));
+    const result = await addToCart(productId);
+    if (result.success) {
+      setCartStatus((prev) => ({ ...prev, [productId]: "added" }));
+      setTimeout(() => {
+        setCartStatus((prev) => ({ ...prev, [productId]: "" }));
+      }, 1500);
+    } else {
+      setCartStatus((prev) => ({ ...prev, [productId]: result.error || "Failed to add" }));
+      setTimeout(() => {
+        setCartStatus((prev) => ({ ...prev, [productId]: "" }));
+      }, 2500);
+    }
+  };
 
   const handleAddToWishlist = async (productId) => {
     setWishlistStatus((prev) => ({ ...prev, [productId]: "loading" }));
@@ -113,6 +132,19 @@ function Products() {
                   <p className="product-stock">{product.stock} units left</p>
                   <button className="btn-details" onClick={() => navigate(`/products/${product._id}`)}>
                     View Details
+                  </button>
+                  <button
+                    className="btn-add-cart"
+                    disabled={cartStatus[product._id] === "loading"}
+                    onClick={() => handleAddToCart(product._id)}
+                  >
+                    {cartStatus[product._id] === "loading"
+                      ? "Adding..."
+                      : cartStatus[product._id] === "added"
+                      ? "✓ Added to Cart"
+                      : cartStatus[product._id]
+                      ? cartStatus[product._id]
+                      : "Add to Cart"}
                   </button>
                   <button
                     className="btn-wishlist"
