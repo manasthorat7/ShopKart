@@ -13,8 +13,17 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 8080;
 
+// Allowed origins — localhost for dev, CLIENT_URL for production
+const ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    process.env.CLIENT_URL
+].filter(Boolean);
+
 app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", req.headers.origin || "http://localhost:5173");
+    const origin = req.headers.origin;
+    if (origin && ALLOWED_ORIGINS.includes(origin)) {
+        res.header("Access-Control-Allow-Origin", origin);
+    }
     res.header("Access-Control-Allow-Credentials", "true");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     res.header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
@@ -34,11 +43,16 @@ app.use("/wishlist", wishlistRoutes);
 app.use("/cart", cartRoutes);
 app.use("/orders", orderRoutes);
 
+// Health check — public, no auth required
+app.get("/health", (req, res) => {
+    res.status(200).json({ status: "ok", message: "Server is running" });
+});
+
 mongoose
     .connect(process.env.MONGO_URL)
     .then(() => {
         console.log("DB Connected");
-        app.listen(PORT, () => {
+        app.listen(PORT, "0.0.0.0", () => {
             console.log(`Server Started at ${PORT}`);
         });
     })
