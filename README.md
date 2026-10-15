@@ -1,13 +1,19 @@
-﻿# ShopKart 🛒
+# ShopKart 🛒
 
 A full-stack e-commerce web application built with **React**, **Node.js**, **Express**, **MongoDB**, and **Razorpay** (Test Mode).
+
+## 🚀 Live Demo
+
+- **Frontend (Vercel):** [https://shop-kart-black-six.vercel.app/](https://shop-kart-black-six.vercel.app/)
+- **Backend (Render):** [https://shopkart-1k4e.onrender.com](https://shopkart-1k4e.onrender.com)
 
 ---
 
 ## Table of Contents
 
-1. [Project Overview](#project-overview)
-2. [Tech Stack](#tech-stack)
+1. [Live Demo](#-live-demo)
+2. [Project Overview](#project-overview)
+3. [Tech Stack](#tech-stack)
 3. [Features](#features)
 4. [Project Structure](#project-structure)
 5. [Getting Started](#getting-started)
